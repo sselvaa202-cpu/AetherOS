@@ -1,20 +1,24 @@
 from fastapi import FastAPI
 
+from app.core.config import settings
+
 app = FastAPI(
-    title="AetherOS API",
-    version="1.0.0"
+    title=settings.app_name,
+    version=settings.app_version
 )
 
 
 @app.get("/")
 def root():
     return {
-        "message": "Welcome to AetherOS"
+        "message": f"Welcome to {settings.app_name}"
     }
 
 
 @app.get("/health")
 def health():
     return {
-        "status": "Running"
+        "status": "Running",
+        "version": settings.app_version,
+        "debug": settings.debug
     }
