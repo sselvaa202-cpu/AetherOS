@@ -9,6 +9,9 @@ class Settings(BaseSettings):
     secret_key: str
     database_url: str
 
+    access_token_expire_minutes: int
+    algorithm: str
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
