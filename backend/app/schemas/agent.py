@@ -1,3 +1,6 @@
+from datetime import datetime
+from typing import Any
+
 from pydantic import BaseModel
 
 
@@ -19,7 +22,10 @@ class AgentRequest(BaseModel):
 
 class AgentResponse(BaseModel):
     """
-    Response returned by an AI agent.
+    Standard response returned by any AI agent.
     """
-    agent_name: str
-    result: str
+    agent: str
+    status: str
+    execution_time_ms: float
+    timestamp: datetime
+    result: Any
