@@ -31,6 +31,8 @@ class OpenRouterProvider(BaseLLM):
             max_tokens=settings.llm_max_tokens,
             temperature=settings.llm_temperature,
         )
+        print("=" * 50)
         print(response)
+        print("=" * 50)
         return response.choices[0].message.content
     

@@ -19,6 +19,14 @@ class AgentRequest(BaseModel):
     agent_name: str
     task: str
 
+class TaskRequest(BaseModel):
+    """
+    Request without specifying an agent.
+    The Router Agent will decide.
+    """
+
+    task: str
+
 
 class AgentResponse(BaseModel):
     """
