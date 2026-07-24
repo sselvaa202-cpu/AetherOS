@@ -13,6 +13,14 @@ class RouterAgent(BaseAgent):
 
         task_lower = task.lower()
 
+        # Multi-Agent Workflow
+        if "build" in task_lower and "website" in task_lower:
+            return [
+                "planner",
+                "database",
+                "coding"
+                    ]
+        
         # Database tasks
         if any(word in task_lower for word in [
             "database",

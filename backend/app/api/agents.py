@@ -6,6 +6,7 @@ from app.agents.research import ResearchAgent
 from app.agents.coding import CodingAgent
 from app.agents.database import DatabaseAgent
 from app.agents.router import RouterAgent
+from app.orchestrator.orchestrator import Orchestrator
 
 from app.schemas.agent import (
     AgentRequest,
@@ -28,10 +29,13 @@ database = DatabaseAgent()
 
 # Register all agents
 manager.register_agent(router_agent)
-planner = PlannerAgent()
+manager.register_agent(planner)
 manager.register_agent(ResearchAgent())
 manager.register_agent(CodingAgent())
 manager.register_agent(DatabaseAgent())
+
+# Create Orchestrator
+orchestrator = Orchestrator(manager)
 
 
 # List All Agents
@@ -55,22 +59,19 @@ def run_agent(request: AgentRequest):
         )
 
     result = agent.run(request.task)
+    
+    return result
 
 # Automatic Routing (New Endpoint)
 @router.post("/execute")
 def execute_task(request: TaskRequest):
 
-    # Ask Router which agent should execute the task
-    selected_agent_name = router_agent.run(request.task)
+    try:
+        return orchestrator.execute(request.task)
 
-    # Retrieve that agent
-    agent = manager.get_agent(selected_agent_name)
-
-    if agent is None:
+    except ValueError as e:
         raise HTTPException(
             status_code=404,
-            detail="Selected agent not found"
+            detail=str(e)
         )
-
-    # Execute task
-    return agent.run(request.task)
+    
