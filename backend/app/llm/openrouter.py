@@ -28,7 +28,7 @@ class OpenRouterProvider(BaseLLM):
                     "content": prompt,
                 }
             ],
-            max_tokens=settings.llm_max_tokens,
+            max_tokens=max_tokens,
             temperature=settings.llm_temperature,
         )
         print("=" * 50)

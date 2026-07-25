@@ -17,8 +17,12 @@ class ResearchAgent(BaseAgent):
 
         prompt = build_research_prompt(task)
 
-        response = llm.generate(prompt,max_tokens=350,)
-
+        response = llm.generate(prompt,max_tokens=100,)
+        if context:
+             context.add_result(
+                 self.name,
+                 response
+             )
         return {
             "agent": self.name,
             "task": task,
