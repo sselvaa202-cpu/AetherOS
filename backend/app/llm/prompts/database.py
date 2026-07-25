@@ -1,4 +1,7 @@
-def build_database_prompt(task: str) -> str:
+def build_database_prompt(
+    task: str,
+    planner_result: str = "",
+):
     return f"""
 You are the Database Agent of AetherOS.
 
@@ -26,4 +29,9 @@ Return only the final answer.
 
 Task:
 {task}
+
+Planner's Execution Plan:
+{planner_result}
+
+Using the planner's execution plan, design a production-ready PostgreSQL database schema.
 """

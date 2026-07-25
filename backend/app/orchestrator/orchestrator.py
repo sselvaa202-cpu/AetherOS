@@ -1,5 +1,5 @@
 from app.agents.manager import AgentManager
-
+from app.orchestrator.context import WorkflowContext
 
 class Orchestrator:
     """
@@ -16,9 +16,11 @@ class Orchestrator:
         self,
         task: str,
     ):
+        
         """
         Route the task and execute the selected agents.
         """
+        context = WorkflowContext(task)
 
         # Get Router Agent from Manager
         router = self.manager.get_agent("router")
@@ -40,9 +42,13 @@ class Orchestrator:
                     f"Agent '{agent_name}' is not registered."
                 )
 
-            result = agent.run(task)
+            result = agent.run(task,context)
 
             results.append(result)
+            
+            print("\n===== Workflow Context =====")
+            print(context.get_all_results())
+            print("============================\n")
 
         return {
             "workflow": selected_agents,

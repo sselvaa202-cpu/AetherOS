@@ -11,13 +11,29 @@ class DatabaseAgent(BaseAgent):
             description="Designs databases, writes SQL queries, and optimizes schemas."
         )
 
-    def run(self, task: str):
+    def run(self, task: str,context=None,):
 
         llm = get_llm()
+        planner_result = ""
 
-        prompt = build_database_prompt(task)
+        if context:
+            planner_result = context.get_result("planner") or ""
 
-        response = llm.generate(prompt)
+        print("\n===== Planner Output =====")
+        print(planner_result)
+        print("==========================\n")
+
+        prompt = build_database_prompt(
+            task,
+            planner_result,
+        )
+
+        response = llm.generate(prompt,max_tokens=450,)
+        if context:
+            context.add_result(
+                self.name,
+                response
+            )
 
         return {
             "agent": self.name,

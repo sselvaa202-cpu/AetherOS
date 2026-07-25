@@ -11,13 +11,36 @@ class CodingAgent(BaseAgent):
             description="Generates, explains, and improves source code."
         )
 
-    def run(self, task: str):
+    def run(self, task: str, context=None,):
 
         llm = get_llm()
 
-        prompt = build_coding_prompt(task)
+        planner_result = ""
+        database_result = ""
+        if context:
+            planner_result = context.get_result("planner") or ""
+            database_result = context.get_result("database") or ""
 
-        response = llm.generate(prompt)
+        print("\n===== Planner Output =====")
+        print(planner_result)
+
+        print("\n===== Database Output =====")
+        print(database_result)
+        print("==========================")
+
+        prompt = build_coding_prompt(
+            task,
+            planner_result,
+            database_result
+        )
+
+        response = llm.generate(prompt,max_tokens=450,)
+
+        if context:
+            context.add_result(
+                self.name,
+                response
+            )
 
         return {
             "agent": self.name,

@@ -74,4 +74,3 @@ def execute_task(request: TaskRequest):
             status_code=404,
             detail=str(e)
         )
-    

@@ -32,7 +32,7 @@ class RouterAgent(BaseAgent):
             "table",
             "query"
         ]):
-            return "database"
+            return ["planner"]
 
         # Coding tasks
         if any(word in task_lower for word in [
@@ -45,7 +45,7 @@ class RouterAgent(BaseAgent):
             "crud",
             "endpoint"
         ]):
-            return "coding"
+            return ["coding"]
 
         # Research tasks
         if any(word in task_lower for word in [
@@ -55,7 +55,7 @@ class RouterAgent(BaseAgent):
             "compare",
             "difference"
         ]):
-            return "research"
+            return ["research"]
 
         # Planning tasks
         if any(word in task_lower for word in [
@@ -63,6 +63,6 @@ class RouterAgent(BaseAgent):
             "roadmap",
             "architecture"
         ]):
-            return "planner"
+            return ["planner"]
 
-        return "planner"
+        return ["planner"]

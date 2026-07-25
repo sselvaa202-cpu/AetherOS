@@ -11,13 +11,13 @@ class ResearchAgent(BaseAgent):
             description="Researches topics and provides detailed information."
         )
 
-    def run(self, task: str):
+    def run(self, task: str,context=None,):
 
         llm = get_llm()
 
         prompt = build_research_prompt(task)
 
-        response = llm.generate(prompt)
+        response = llm.generate(prompt,max_tokens=350,)
 
         return {
             "agent": self.name,

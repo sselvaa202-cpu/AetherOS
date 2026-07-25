@@ -15,7 +15,7 @@ class OpenRouterProvider(BaseLLM):
             base_url=settings.openrouter_base_url,
         )
 
-    def generate(self, prompt: str) -> str:
+    def generate(self, prompt: str,max_tokens: int = 400,) -> str:
         """
         Send a prompt to OpenRouter and return the response.
         """

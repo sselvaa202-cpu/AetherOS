@@ -3,13 +3,13 @@ from abc import ABC, abstractmethod
 
 class BaseAgent(ABC):
     """
-    Base class for all AetherOS AI agents.
+    Base class for all AI agents.
     """
 
     def __init__(
         self,
         name: str,
-        description: str
+        description: str,
     ):
         self.name = name
         self.description = description
@@ -17,10 +17,10 @@ class BaseAgent(ABC):
     @abstractmethod
     def run(
         self,
-        task: str
+        task: str,
+        context=None,
     ):
         """
-        Execute the given task.
+        Execute the assigned task.
         """
         pass
-    

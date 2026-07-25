@@ -11,13 +11,18 @@ class PlannerAgent(BaseAgent):
             description="Breaks a task into an execution plan."
         )
 
-    def run(self, task: str):
+    def run(self, task: str,context=None):
 
         llm = get_llm()
 
         prompt = build_planner_prompt(task)
 
-        response = llm.generate(prompt)
+        response = llm.generate(prompt,max_tokens=350,)
+        if context:
+             context.add_result(
+                 self.name,
+                response
+             )
 
         return {
             "agent": self.name,

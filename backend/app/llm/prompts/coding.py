@@ -1,4 +1,8 @@
-def build_coding_prompt(task: str) -> str:
+def build_coding_prompt(
+    task: str,
+    planner_result: str = "",
+    database_result: str = "",
+):
     return f"""
 You are the Coding Agent of AetherOS.
 
@@ -22,4 +26,18 @@ Return only the final answer.
 
 Task:
 {task}
+Planner's Execution Plan:
+{planner_result}
+
+Database Schema:
+{database_result}
+
+Using the planner's execution plan and the database schema, generate a production-ready implementation.
+
+Requirements:
+- Follow the planner's implementation steps.
+- Use the provided database schema.
+- Write clean, modular, maintainable code.
+- Follow best practices.
+- Return only the final implementation.
 """
