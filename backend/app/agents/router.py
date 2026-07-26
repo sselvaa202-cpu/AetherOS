@@ -19,6 +19,7 @@ class RouterAgent(BaseAgent):
                 "planner",
                 "database",
                 "coding"
+                "reviewer"
                     ]
         
         # Database tasks
@@ -32,7 +33,7 @@ class RouterAgent(BaseAgent):
             "table",
             "query"
         ]):
-            return ["planner"]
+            return ["database"]
 
         # Coding tasks
         if any(word in task_lower for word in [

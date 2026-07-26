@@ -7,6 +7,7 @@ from app.agents.coding import CodingAgent
 from app.agents.database import DatabaseAgent
 from app.agents.router import RouterAgent
 from app.orchestrator.orchestrator import Orchestrator
+from app.agents.reviewer import ReviewerAgent
 
 from app.schemas.agent import (
     AgentRequest,
@@ -26,13 +27,15 @@ planner = PlannerAgent()
 research = ResearchAgent()
 coding = CodingAgent()
 database = DatabaseAgent()
+reviewer = ReviewerAgent()
 
 # Register all agents
 manager.register_agent(router_agent)
-manager.register_agent(planner)
+manager.register_agent(PlannerAgent())
 manager.register_agent(ResearchAgent())
 manager.register_agent(CodingAgent())
 manager.register_agent(DatabaseAgent())
+manager.register_agent(ReviewerAgent())
 
 # Create Orchestrator
 orchestrator = Orchestrator(manager)
