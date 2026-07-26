@@ -42,7 +42,7 @@ class ReviewerAgent(BaseAgent):
             coding_result
         )
 
-        response = llm.generate(prompt)
+        response = llm.generate(prompt,max_tokens=200)
 
         if context:
             context.add_result(

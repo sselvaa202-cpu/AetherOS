@@ -26,18 +26,24 @@ Return only the final answer.
 
 Task:
 {task}
+
 Planner's Execution Plan:
-{planner_result}
+{planner_result[:300]}
 
 Database Schema:
-{database_result}
+{database_result[:600]}
 
-Using the planner's execution plan and the database schema, generate a production-ready implementation.
+Using the planner's execution plan and database schema, generate the implementation in this order:
 
-Requirements:
-- Follow the planner's implementation steps.
-- Use the provided database schema.
-- Write clean, modular, maintainable code.
-- Follow best practices.
-- Return only the final implementation.
+1. Folder Structure
+2. Backend File List
+3. Frontend File List
+4. APIs
+5. Stop.
+
+Do NOT generate source code.
+
+Do NOT explain anything.
+
+Keep the response under 80 lines.
 """

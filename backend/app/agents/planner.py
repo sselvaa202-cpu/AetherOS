@@ -17,7 +17,12 @@ class PlannerAgent(BaseAgent):
 
         prompt = build_planner_prompt(task)
 
-        response = llm.generate(prompt,max_tokens=100,)
+        response = llm.generate(prompt,max_tokens=120,)
+
+        print("\n===== Planner Response =====")
+        print(repr(response))
+        print("============================\n")
+
         if context:
              context.add_result(
                  self.name,

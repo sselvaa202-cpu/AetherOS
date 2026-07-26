@@ -14,6 +14,7 @@ class OpenRouterProvider(BaseLLM):
             api_key=settings.openrouter_api_key,
             base_url=settings.openrouter_base_url,
         )
+        print("Model:", settings.llm_model)
 
     def generate(self, prompt: str,max_tokens: int = 400,) -> str:
         """
@@ -34,5 +35,14 @@ class OpenRouterProvider(BaseLLM):
         print("=" * 50)
         print(response)
         print("=" * 50)
+
+        print("=" * 80)
+        print(response.choices[0].message)
+        print("=" * 80)
+
+        print("CONTENT:", response.choices[0].message.content)
+        print("REASONING:", getattr(response.choices[0].message, "reasoning", None))
+        print("FINISH:", response.choices[0].finish_reason)
+        
         return response.choices[0].message.content
     

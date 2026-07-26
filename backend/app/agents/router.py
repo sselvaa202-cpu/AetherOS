@@ -18,7 +18,7 @@ class RouterAgent(BaseAgent):
             return [
                 "planner",
                 "database",
-                "coding"
+                "coding",
                 "reviewer"
                     ]
         

@@ -34,7 +34,7 @@ class CodingAgent(BaseAgent):
             database_result
         )
 
-        response = llm.generate(prompt,max_tokens=100,)
+        response = llm.generate(prompt,max_tokens=700,)
 
         if context:
             context.add_result(

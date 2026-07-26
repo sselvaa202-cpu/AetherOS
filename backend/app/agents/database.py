@@ -28,7 +28,12 @@ class DatabaseAgent(BaseAgent):
             planner_result,
         )
 
-        response = llm.generate(prompt,max_tokens=100,)
+        response = llm.generate(prompt,max_tokens=250,)
+
+        print("\n===== Database Response =====")
+        print(repr(response))
+        print("============================\n")
+
         if context:
             context.add_result(
                 self.name,

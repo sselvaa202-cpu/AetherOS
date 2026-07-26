@@ -43,6 +43,9 @@ class Orchestrator:
                 )
 
             result = agent.run(task,context)
+            print("\n===== Agent Result =====")
+            print(result)
+            print("========================")
 
             results.append(result)
             
