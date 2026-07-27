@@ -37,12 +37,35 @@ class OpenRouterProvider(BaseLLM):
         print("=" * 50)
 
         print("=" * 80)
-        print(response.choices[0].message)
+        print("RAW RESPONSE")
+        print(response)
         print("=" * 80)
 
-        print("CONTENT:", response.choices[0].message.content)
-        print("REASONING:", getattr(response.choices[0].message, "reasoning", None))
+        # Safety checks
+        if response is None:
+            print("ERROR: response is None")
+            return "No response received."
+
+        if response.choices is None:
+            print("ERROR: response.choices is None")
+            return "No choices returned."
+
+        if len(response.choices) == 0:
+            print("ERROR: response.choices is empty")
+            return "Empty choices."
+
+        message = response.choices[0].message
+
+        print("CONTENT:", message.content)
+        print("REASONING:", getattr(message, "reasoning", None))
         print("FINISH:", response.choices[0].finish_reason)
-        
-        return response.choices[0].message.content
+
+
+        if message.content:
+            return message.content
+
+        if getattr(message, "reasoning", None):
+            return message.reasoning
+
+        return "Model returned no content."
     

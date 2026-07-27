@@ -13,15 +13,44 @@ class RouterAgent(BaseAgent):
 
         task_lower = task.lower()
 
-        # Multi-Agent Workflow
-        if "build" in task_lower and "website" in task_lower:
+        # Complete software development workflow
+        if any(word in task_lower for word in [
+            "build",
+            "develop",
+            "create",
+            "website",
+            "application",
+            "system",
+            "platform"
+        ]):
             return [
                 "planner",
+                "research",
                 "database",
                 "coding",
                 "reviewer"
-                    ]
-        
+            ]
+
+        # Research tasks
+        if any(word in task_lower for word in [
+            "research",
+            "explain",
+            "what is",
+            "compare",
+            "difference",
+            "advantages",
+            "disadvantages"
+        ]):
+            return ["research"]
+
+        # Planning tasks
+        if any(word in task_lower for word in [
+            "plan",
+            "roadmap",
+            "architecture"
+        ]):
+            return ["planner"]
+
         # Database tasks
         if any(word in task_lower for word in [
             "database",
@@ -48,22 +77,5 @@ class RouterAgent(BaseAgent):
         ]):
             return ["coding"]
 
-        # Research tasks
-        if any(word in task_lower for word in [
-            "research",
-            "explain",
-            "what is",
-            "compare",
-            "difference"
-        ]):
-            return ["research"]
-
-        # Planning tasks
-        if any(word in task_lower for word in [
-            "plan",
-            "roadmap",
-            "architecture"
-        ]):
-            return ["planner"]
-
+        # Default
         return ["planner"]

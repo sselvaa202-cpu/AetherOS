@@ -36,6 +36,10 @@ class CodingAgent(BaseAgent):
 
         response = llm.generate(prompt,max_tokens=700,)
 
+        print("\n===== Coding Agent Response =====")
+        print(response)
+        print("=================================\n")
+
         if context:
             context.add_result(
                 self.name,
