@@ -13,46 +13,26 @@ class RouterAgent(BaseAgent):
 
         task_lower = task.lower()
 
-        # Complete software development workflow
-        if any(word in task_lower for word in [
-            "build",
-            "develop",
-            "create",
-            "website",
-            "application",
-            "system",
-            "platform"
-        ]):
-            return [
-                "planner",
-                "research",
-                "database",
-                "coding",
-                "reviewer"
-            ]
+        # Planner Task
+        planner_keywords = [
+            "plan",
+            "roadmap",
+            "architecture",
+            "design"
+        ]
 
-        # Research tasks
-        if any(word in task_lower for word in [
+        # research Task
+        research_keywords = [
             "research",
             "explain",
             "what is",
             "compare",
             "difference",
-            "advantages",
-            "disadvantages"
-        ]):
-            return ["research"]
+            "learn"
+        ]
 
-        # Planning tasks
-        if any(word in task_lower for word in [
-            "plan",
-            "roadmap",
-            "architecture"
-        ]):
-            return ["planner"]
-
-        # Database tasks
-        if any(word in task_lower for word in [
+        # Database Task
+        database_keywords = [
             "database",
             "schema",
             "sql",
@@ -61,11 +41,10 @@ class RouterAgent(BaseAgent):
             "mysql",
             "table",
             "query"
-        ]):
-            return ["database"]
+        ]
 
-        # Coding tasks
-        if any(word in task_lower for word in [
+        # Coding Task
+        coding_keywords = [
             "code",
             "python",
             "fastapi",
@@ -73,8 +52,42 @@ class RouterAgent(BaseAgent):
             "api",
             "implement",
             "crud",
-            "endpoint"
-        ]):
+            "endpoint",
+            "backend",
+            "frontend"
+        ]
+
+        #Full software development workflow
+        if (
+            ("build" in task_lower or "develop" in task_lower)
+            and
+            any(word in task_lower for word in [
+                "website",
+                "application",
+                "system",
+                "platform",
+                "software"
+            ])
+        ):
+            return [
+                "planner",
+                "research",
+                "database",
+                "coding",
+                "reviewer"
+            ]
+        
+        # Individual agent routing
+        if any(word in task_lower for word in planner_keywords):
+            return ["planner"]
+
+        if any(word in task_lower for word in research_keywords):
+            return ["research"]
+
+        if any(word in task_lower for word in database_keywords):
+            return ["database"]
+
+        if any(word in task_lower for word in coding_keywords):
             return ["coding"]
 
         # Default
