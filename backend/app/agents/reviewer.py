@@ -45,7 +45,7 @@ class ReviewerAgent(BaseAgent):
         response = llm.generate(prompt,max_tokens=200)
 
         if context:
-            context.add_result(
+            context.set_result(
                 self.name,
                 response
             )

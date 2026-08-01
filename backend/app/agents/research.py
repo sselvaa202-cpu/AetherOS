@@ -19,7 +19,7 @@ class ResearchAgent(BaseAgent):
 
         response = llm.generate(prompt,max_tokens=100,)
         if context:
-             context.add_result(
+             context.set_result(
                  self.name,
                  response
              )

@@ -1,24 +1,37 @@
+from app.orchestrator.status import AgentStatus
+
+
 class WorkflowContext:
     """
-    Shared context passed between AI agents.
+    Shared context passed between all agents.
     """
 
     def __init__(self, task: str):
         self.task = task
+
+        # Stores outputs from agents
         self.results = {}
 
-    def add_result(
-        self,
-        agent_name: str,
-        result,
-    ):
-        self.results[agent_name] = result
+        # Stores execution status of agents
+        self.status = {}
 
-    def get_result(
-        self,
-        agent_name: str,
-    ):
-        return self.results.get(agent_name)
+
+    # Results
+    def set_result(self, agent: str, result):
+        self.results[agent] = result
+
+    def get_result(self, agent: str):
+        return self.results.get(agent)
 
     def get_all_results(self):
         return self.results
+
+    # Status
+    def set_status(self, agent: str, status: AgentStatus):
+        self.status[agent] = status
+
+    def get_status(self, agent: str):
+        return self.status.get(agent)
+
+    def get_all_status(self):
+        return self.status

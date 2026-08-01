@@ -1,5 +1,6 @@
 from app.agents.manager import AgentManager
 from app.orchestrator.context import WorkflowContext
+from app.orchestrator.status import AgentStatus
 import time
 
 
@@ -8,29 +9,23 @@ class Orchestrator:
     Controls the execution of AI agents.
     """
 
-    def __init__(
-        self,
-        manager: AgentManager,
-    ):
+    def __init__(self, manager: AgentManager):
         self.manager = manager
 
-    def execute(
-        self,
-        task: str,
-    ):
+    def execute(self, task: str):
         """
         Route the task and execute the selected agents.
         """
 
         context = WorkflowContext(task)
 
-        # Get Router Agent from Manager
+        # Get Router Agent
         router = self.manager.get_agent("router")
 
         if router is None:
             raise ValueError("Router agent is not registered.")
 
-        # Router returns a list of agent names
+        # Router returns list of agent names
         selected_agents = router.run(task)
 
         results = {}
@@ -47,33 +42,65 @@ class Orchestrator:
                     f"Agent '{agent_name}' is not registered."
                 )
 
-            # Agent Start Time
-            agent_start = time.perf_counter()
+            try:
+                # -----------------------------
+                # Agent Started
+                # -----------------------------
+                context.set_status(agent_name, AgentStatus.RUNNING)
 
-            result = agent.run(task, context)
+                print("\n" + "=" * 60)
+                print(f"Agent  : {agent_name}")
+                print(f"Status : {AgentStatus.RUNNING.value}")
+                print("=" * 60)
 
-            # Agent End Time
-            agent_end = time.perf_counter()
+                # Start Timer
+                agent_start = time.perf_counter()
 
-            execution_time = round(
-                (agent_end - agent_start) * 1000,
-                2
-            )
+                result = agent.run(task, context)
 
-            print(f"\n{agent_name} executed in {execution_time} ms")
+                # End Timer
+                agent_end = time.perf_counter()
 
-            print("\n===== Agent Result =====")
-            print(result)
-            print("========================")
+                execution_time = round(
+                    (agent_end - agent_start) * 1000,
+                    2
+                )
 
-            results[agent_name] = {
-            **result,
-            "execution_time_ms": execution_time
-            }
+                # Save Result
+                results[agent_name] = {
+                    **result,
+                    "execution_time_ms": execution_time
+                }
 
-            print("\n===== Workflow Context =====")
+                # Save to Context
+                context.set_result(agent_name, result)
+
+                # Completed
+                context.set_status(
+                    agent_name,
+                    AgentStatus.COMPLETED
+                )
+
+                print(f"Status : {AgentStatus.COMPLETED.value}")
+                print(f"Time   : {execution_time} ms")
+
+            except Exception as e:
+
+                context.set_status(
+                    agent_name,
+                    AgentStatus.FAILED
+                )
+
+                print(f"Status : {AgentStatus.FAILED.value}")
+                print(f"Error  : {e}")
+
+                raise
+
+            print("\nWorkflow Status")
+            print(context.get_all_status())
+
+            print("\nWorkflow Results")
             print(context.get_all_results())
-            print("============================\n")
 
         # Workflow End Time
         workflow_end = time.perf_counter()
@@ -89,6 +116,7 @@ class Orchestrator:
 
         return {
             "workflow": selected_agents,
+            "status": context.get_all_status(),
             "total_execution_time_ms": total_time,
             "results": results
         }

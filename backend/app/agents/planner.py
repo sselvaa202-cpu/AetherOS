@@ -24,7 +24,7 @@ class PlannerAgent(BaseAgent):
         print("============================\n")
 
         if context:
-             context.add_result(
+             context.set_result(
                  self.name,
                 response
              )
