@@ -1,3 +1,5 @@
+import re
+
 from app.agents.base import BaseAgent
 
 
@@ -12,26 +14,35 @@ class RouterAgent(BaseAgent):
     def run(self, task: str):
 
         task_lower = task.lower()
+        expression = task.replace(" ", "")
 
-        # Planner Task
+    
+        # Mathematical Expression
+        if re.fullmatch(r"[0-9+\-*/().]+", expression):
+            return ["research"]
+
+
+        # Planner Keywords
         planner_keywords = [
             "plan",
             "roadmap",
             "architecture",
-            "design"
+            "design",
         ]
 
-        # research Task
+      
+        # Research Keywords
         research_keywords = [
             "research",
             "explain",
             "what is",
             "compare",
             "difference",
-            "learn"
+            "learn",
         ]
 
-        # Database Task
+
+        # Database Keywords
         database_keywords = [
             "database",
             "schema",
@@ -40,10 +51,11 @@ class RouterAgent(BaseAgent):
             "postgresql",
             "mysql",
             "table",
-            "query"
+            "query",
         ]
 
-        # Coding Task
+
+        # Coding Keywords
         coding_keywords = [
             "code",
             "python",
@@ -54,30 +66,34 @@ class RouterAgent(BaseAgent):
             "crud",
             "endpoint",
             "backend",
-            "frontend"
+            "frontend",
         ]
 
-        #Full software development workflow
+
+        # Full Software Workflow
         if (
             ("build" in task_lower or "develop" in task_lower)
-            and
-            any(word in task_lower for word in [
-                "website",
-                "application",
-                "system",
-                "platform",
-                "software"
-            ])
+            and any(
+                word in task_lower
+                for word in [
+                    "website",
+                    "application",
+                    "system",
+                    "platform",
+                    "software",
+                ]
+            )
         ):
             return [
                 "planner",
                 "research",
                 "database",
                 "coding",
-                "reviewer"
+                "reviewer",
             ]
-        
-        # Individual agent routing
+
+
+        # Individual Routing
         if any(word in task_lower for word in planner_keywords):
             return ["planner"]
 
@@ -90,5 +106,6 @@ class RouterAgent(BaseAgent):
         if any(word in task_lower for word in coding_keywords):
             return ["coding"]
 
+ 
         # Default
         return ["planner"]
