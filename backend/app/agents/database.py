@@ -15,9 +15,24 @@ class DatabaseAgent(BaseAgent):
 
         llm = get_llm()
         planner_result = ""
+        planner_messages = []
 
         if context:
             planner_result = context.get_result("planner") or ""
+
+            # Receive messages sent to Database Agent
+            planner_messages = context.message_bus.receive_messages(
+                self.name
+            )
+
+            print("\n===== Database Received Messages =====")
+
+            for msg in planner_messages:
+                print(f"From : {msg.sender}")
+                print(f"Message : {msg.content}")
+
+            print("======================================\n")
+
 
         print("\n===== Planner Output =====")
         print(planner_result)
@@ -38,6 +53,13 @@ class DatabaseAgent(BaseAgent):
             context.set_result(
                 self.name,
                 response
+            )
+
+                # Notify Coding Agent
+            context.message_bus.send_message(
+                sender=self.name,
+                receiver="coding",
+                content="Database schema is complete. Start backend implementation."
             )
 
         return {

@@ -24,10 +24,19 @@ class PlannerAgent(BaseAgent):
         print("============================\n")
 
         if context:
+             # Store planner output
              context.set_result(
                  self.name,
                 response
              )
+
+             # Send message to Database Agent
+             context.message_bus.send_message(
+                sender=self.name,
+                receiver="database",
+                content="Execution plan is ready. Design the PostgreSQL database schema."
+             )
+
 
         return {
             "agent": self.name,

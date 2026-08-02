@@ -18,11 +18,44 @@ class ReviewerAgent(BaseAgent):
         planner_result = ""
         database_result = ""
         coding_result = ""
+        coding_messages = []
 
         if context:
-            planner_result = context.get_result("planner") or ""
-            database_result = context.get_result("database") or ""
-            coding_result = context.get_result("coding") or ""
+
+            planner_data = context.get_result("planner")
+            database_data = context.get_result("database")
+            coding_data = context.get_result("coding")
+
+            # Extract planner output
+            if isinstance(planner_data, dict):
+                planner_result = planner_data.get("plan", "")
+            else:
+                planner_result = planner_data or ""
+
+            # Extract database output
+            if isinstance(database_data, dict):
+                database_result = database_data.get("database", "")
+            else:
+                database_result = database_data or ""
+
+            # Extract coding output
+            if isinstance(coding_data, dict):
+                coding_result = coding_data.get("code", "")
+            else:
+                coding_result = coding_data or ""
+
+            # Receive messages from Coding Agent
+            coding_messages = context.message_bus.receive_messages(
+                self.name
+            )
+
+            print("\n===== Reviewer Received Messages =====")
+
+            for msg in coding_messages:
+                print(f"From    : {msg.sender}")
+                print(f"Message : {msg.content}")
+
+            print("======================================\n")
 
             print("\n===== Planner Output =====")
             print(planner_result)
@@ -42,16 +75,21 @@ class ReviewerAgent(BaseAgent):
             coding_result
         )
 
-        response = llm.generate(prompt,max_tokens=200)
+        response = llm.generate(
+            prompt,
+            max_tokens=200
+        )
 
-        if context:
-            context.set_result(
-                self.name,
-                response
-            )
-
-        return {
+        result = {
             "agent": self.name,
             "task": task,
             "review": response
         }
+
+        if context:
+            context.set_result(
+                self.name,
+                result
+            )
+
+        return result
