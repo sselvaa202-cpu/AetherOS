@@ -1,6 +1,9 @@
 from app.orchestrator.message_bus import MessageBus
 from app.orchestrator.status import AgentStatus
 
+from app.memory.manager import MemoryManager
+from app.memory.conversation import ConversationMemory
+
 
 class WorkflowContext:
     """
@@ -19,7 +22,15 @@ class WorkflowContext:
         # Shared Message Bus
         self.message_bus = MessageBus()
 
+        # Memory Manager
+        self.memory_manager = MemoryManager()
 
+        # Register Conversation Memory
+        self.memory_manager.register_memory(
+            ConversationMemory()
+        )
+
+ 
     # Results
     def set_result(
         self,
@@ -37,6 +48,7 @@ class WorkflowContext:
     def get_all_results(self):
         return self.results
 
+
     # Status
     def set_status(
         self,
@@ -53,3 +65,20 @@ class WorkflowContext:
 
     def get_all_status(self):
         return self.status
+
+
+    # Memory
+    def get_memory(
+        self,
+        name: str,
+    ):
+        """
+        Return a registered memory instance.
+        """
+        return self.memory_manager.get_memory(name)
+
+    def get_all_memories(self):
+        """
+        Return all registered memories.
+        """
+        return self.memory_manager.get_all_memories()

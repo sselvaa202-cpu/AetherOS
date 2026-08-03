@@ -18,6 +18,18 @@ class ResearchAgent(BaseAgent):
 
     def run(self, task: str, context=None):
 
+        # Get Conversation Memory
+        conversation_memory = None
+
+        if context:
+            conversation_memory = context.get_memory("conversation")
+
+            if conversation_memory:
+                conversation_memory.save(
+                    "user",
+                    task
+                )
+
         # Initialize Tool Manager
         tool_manager = ToolManager()
 
@@ -36,23 +48,27 @@ class ResearchAgent(BaseAgent):
                 expression
             )
 
-            if context:
-                context.set_result(
-                    self.name,
-                    {
-                        "agent": self.name,
-                        "task": task,
-                        "research": str(result),
-                        "tool_used": "calculator",
-                    }
+            # Save assistant response to conversation memory
+            if conversation_memory:
+                conversation_memory.save(
+                    "assistant",
+                    str(result)
                 )
 
-            return {
+            result_data = {
                 "agent": self.name,
                 "task": task,
                 "research": str(result),
                 "tool_used": "calculator",
             }
+
+            if context:
+                context.set_result(
+                    self.name,
+                    result_data
+                )
+
+            return result_data
 
         # Otherwise use the LLM
         llm = get_llm()
@@ -63,6 +79,17 @@ class ResearchAgent(BaseAgent):
             prompt,
             max_tokens=100,
         )
+
+        # Save assistant response to conversation memory
+        if conversation_memory:
+            conversation_memory.save(
+                "assistant",
+                response
+            )
+
+            print("\n===== Conversation Memory =====")
+            print(conversation_memory.get_all())
+            print("===============================\n")
 
         result = {
             "agent": self.name,
