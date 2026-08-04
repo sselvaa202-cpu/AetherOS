@@ -17,6 +17,7 @@ class AgentRequest(BaseModel):
     Request sent to an AI agent.
     """
     agent_name: str
+    session_id: str
     task: str
 
 class TaskRequest(BaseModel):
@@ -25,6 +26,7 @@ class TaskRequest(BaseModel):
     The Router Agent will decide.
     """
 
+    session_id: str
     task: str
 
 

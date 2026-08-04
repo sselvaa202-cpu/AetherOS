@@ -70,7 +70,7 @@ def run_agent(request: AgentRequest):
 def execute_task(request: TaskRequest):
 
     try:
-        return orchestrator.execute(request.task)
+        return orchestrator.execute(request.task,request.session_id)
 
     except ValueError as e:
         raise HTTPException(

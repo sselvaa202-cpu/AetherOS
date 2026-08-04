@@ -1,8 +1,7 @@
 from app.orchestrator.message_bus import MessageBus
 from app.orchestrator.status import AgentStatus
 
-from app.memory.manager import MemoryManager
-from app.memory.conversation import ConversationMemory
+from app.memory.session_store import session_manager
 
 
 class WorkflowContext:
@@ -10,8 +9,13 @@ class WorkflowContext:
     Stores shared workflow data between agents.
     """
 
-    def __init__(self, task: str):
+    def __init__(
+        self,
+        task: str,
+        session_id: str,
+    ):
         self.task = task
+        self.session_id = session_id
 
         # Agent results
         self.results = {}
@@ -22,15 +26,11 @@ class WorkflowContext:
         # Shared Message Bus
         self.message_bus = MessageBus()
 
-        # Memory Manager
-        self.memory_manager = MemoryManager()
-
-        # Register Conversation Memory
-        self.memory_manager.register_memory(
-            ConversationMemory()
+        # Shared Conversation Memory for this session
+        self.conversation_memory = session_manager.get_conversation(
+            session_id
         )
-
- 
+        
     # Results
     def set_result(
         self,
@@ -47,8 +47,7 @@ class WorkflowContext:
 
     def get_all_results(self):
         return self.results
-
-
+    
     # Status
     def set_status(
         self,
@@ -65,20 +64,26 @@ class WorkflowContext:
 
     def get_all_status(self):
         return self.status
-
-
+    
     # Memory
     def get_memory(
         self,
         name: str,
     ):
         """
-        Return a registered memory instance.
+        Return the requested memory.
         """
-        return self.memory_manager.get_memory(name)
+
+        if name == "conversation":
+            return self.conversation_memory
+
+        return None
 
     def get_all_memories(self):
         """
-        Return all registered memories.
+        Return all memories for this workflow.
         """
-        return self.memory_manager.get_all_memories()
+
+        return {
+            "conversation": self.conversation_memory
+        }

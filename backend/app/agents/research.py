@@ -7,6 +7,8 @@ from app.llm.prompts.research import build_research_prompt
 from app.tools.manager import ToolManager
 from app.tools.calculator import CalculatorTool
 
+from app.memory.prompt_builder import build_conversation_prompt
+
 
 class ResearchAgent(BaseAgent):
 
@@ -30,15 +32,14 @@ class ResearchAgent(BaseAgent):
                     task
                 )
 
-        # Initialize Tool Manager
+        # Tool Manager
         tool_manager = ToolManager()
 
-        # Register Available Tools
         tool_manager.register_tool(
             CalculatorTool()
         )
 
-        # Detect Mathematical Expression
+        # Calculator Detection
         expression = task.replace(" ", "")
 
         if re.fullmatch(r"[0-9+\-*/().]+", expression):
@@ -48,7 +49,6 @@ class ResearchAgent(BaseAgent):
                 expression
             )
 
-            # Save assistant response to conversation memory
             if conversation_memory:
                 conversation_memory.save(
                     "assistant",
@@ -70,17 +70,33 @@ class ResearchAgent(BaseAgent):
 
             return result_data
 
-        # Otherwise use the LLM
+        # LLM
         llm = get_llm()
 
-        prompt = build_research_prompt(task)
+        history = []
+
+        if conversation_memory:
+            history = conversation_memory.get_all()
+
+        conversation_prompt = build_conversation_prompt(
+            history,
+            task
+        )
+
+        prompt = build_research_prompt(
+            conversation_prompt
+        )
+
+        print("\n===== Prompt Sent To LLM =====")
+        print(prompt)
+        print("==============================\n")
 
         response = llm.generate(
             prompt,
             max_tokens=100,
         )
 
-        # Save assistant response to conversation memory
+        # Save Assistant Response
         if conversation_memory:
             conversation_memory.save(
                 "assistant",

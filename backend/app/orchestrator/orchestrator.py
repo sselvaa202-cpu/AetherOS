@@ -13,12 +13,12 @@ class Orchestrator:
     def __init__(self, manager: AgentManager):
         self.manager = manager
 
-    def execute(self, task: str):
+    def execute(self, task: str,session_id: str,):
         """
         Route the task and execute the selected agents.
         """
 
-        context = WorkflowContext(task)
+        context = WorkflowContext(task,session_id)
 
         # Get Router Agent
         router = self.manager.get_agent("router")
@@ -43,10 +43,9 @@ class Orchestrator:
                     f"Agent '{agent_name}' is not registered."
                 )
 
+
             try:
-                # -----------------------------
                 # Agent Started
-                # -----------------------------
                 context.set_status(agent_name, AgentStatus.RUNNING)
 
                 print("\n" + "=" * 60)
