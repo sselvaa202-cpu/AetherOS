@@ -1,13 +1,15 @@
 from app.memory.base import BaseMemory
-
+from app.db.session import SessionLocal
+from app.services.conversation_service import ConversationService
 
 class ConversationMemory(BaseMemory):
     """
-    Stores conversation history between the user and the assistant.
+    Stores conversation history.
     """
 
     def __init__(
         self,
+        session_id: str,
         max_messages: int = 20,
     ):
         super().__init__(
@@ -15,8 +17,13 @@ class ConversationMemory(BaseMemory):
             description="Stores conversation history."
         )
 
+        self.session_id = session_id
         self.max_messages = max_messages
         self._messages = []
+
+        # Database
+        self.db = SessionLocal()
+        self.service = ConversationService(self.db)
 
     def save(
         self,
@@ -27,6 +34,7 @@ class ConversationMemory(BaseMemory):
         Save a conversation message.
         """
 
+        # Save in memory
         self._messages.append(
             {
                 "role": role,
@@ -34,7 +42,14 @@ class ConversationMemory(BaseMemory):
             }
         )
 
-        # Keep only the latest messages
+        # Save in PostgreSQL
+        self.service.save_message(
+            session_id=self.session_id,
+            role=role,
+            content=content,
+        )
+
+        # Keep only recent messages in RAM
         if len(self._messages) > self.max_messages:
             self._messages.pop(0)
 
@@ -42,36 +57,20 @@ class ConversationMemory(BaseMemory):
         self,
         index: int,
     ):
-        """
-        Get a message by index.
-        """
-
         if 0 <= index < len(self._messages):
             return self._messages[index]
 
         return None
 
     def get_all(self):
-        """
-        Return the complete conversation.
-        """
-
         return self._messages
 
     def delete(
         self,
         index: int,
     ):
-        """
-        Delete one message.
-        """
-
         if 0 <= index < len(self._messages):
             self._messages.pop(index)
 
     def clear(self):
-        """
-        Clear the conversation history.
-        """
-
         self._messages.clear()

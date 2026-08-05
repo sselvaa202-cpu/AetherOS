@@ -30,7 +30,7 @@ database = DatabaseAgent()
 reviewer = ReviewerAgent()
 
 # Register all agents
-manager.register_agent(router_agent())
+manager.register_agent(router_agent)
 manager.register_agent(PlannerAgent())
 manager.register_agent(ResearchAgent())
 manager.register_agent(CodingAgent())

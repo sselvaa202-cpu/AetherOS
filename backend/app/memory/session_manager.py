@@ -16,7 +16,7 @@ class SessionManager:
         """
 
         if session_id not in self.sessions:
-            self.sessions[session_id] = ConversationMemory()
+            self.sessions[session_id] = ConversationMemory(session_id=session_id)
 
         return self.sessions[session_id]
 
