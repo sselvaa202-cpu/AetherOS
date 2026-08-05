@@ -83,8 +83,21 @@ class ResearchAgent(BaseAgent):
             task
         )
 
-        prompt = build_research_prompt(
-            conversation_prompt
+        # Build prompt using conversation history
+        if conversation_memory:
+
+            prompt = build_conversation_prompt(
+                history=conversation_memory.get_all(),
+                current_question=task,
+            )
+
+        else:
+
+            prompt = build_research_prompt(task)
+
+        response = llm.generate(
+            prompt,
+            max_tokens=100,
         )
 
         print("\n===== Prompt Sent To LLM =====")

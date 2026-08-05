@@ -2,6 +2,7 @@ from app.memory.base import BaseMemory
 from app.db.session import SessionLocal
 from app.services.conversation_service import ConversationService
 
+
 class ConversationMemory(BaseMemory):
     """
     Stores conversation history.
@@ -24,6 +25,24 @@ class ConversationMemory(BaseMemory):
         # Database
         self.db = SessionLocal()
         self.service = ConversationService(self.db)
+
+        # Load previous conversation from PostgreSQL
+        messages = self.service.get_messages(
+            self.session_id
+        )
+
+        self._messages = [
+            {
+                "role": message.role,
+                "content": message.content,
+            }
+            for message in messages
+        ]
+
+        # Debug (Temporary)
+        print("\n===== Loaded Conversation =====")
+        print(self._messages)
+        print("===============================\n")
 
     def save(
         self,
@@ -57,20 +76,32 @@ class ConversationMemory(BaseMemory):
         self,
         index: int,
     ):
+        """
+        Get a message by index.
+        """
         if 0 <= index < len(self._messages):
             return self._messages[index]
 
         return None
 
     def get_all(self):
+        """
+        Return all conversation messages.
+        """
         return self._messages
 
     def delete(
         self,
         index: int,
     ):
+        """
+        Delete a message.
+        """
         if 0 <= index < len(self._messages):
             self._messages.pop(index)
 
     def clear(self):
+        """
+        Clear conversation memory.
+        """
         self._messages.clear()

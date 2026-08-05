@@ -95,7 +95,7 @@ class ConversationService:
 
         return message
 
-    def load_messages(
+    def get_messages(
         self,
         session_id: str,
     ):
