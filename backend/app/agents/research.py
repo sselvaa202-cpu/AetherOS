@@ -104,11 +104,6 @@ class ResearchAgent(BaseAgent):
         print(prompt)
         print("==============================\n")
 
-        response = llm.generate(
-            prompt,
-            max_tokens=100,
-        )
-
         # Save Assistant Response
         if conversation_memory:
             conversation_memory.save(
