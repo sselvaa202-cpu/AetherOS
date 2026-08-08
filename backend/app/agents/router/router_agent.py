@@ -4,6 +4,7 @@ from app.agents.router.router_prompt import ROUTER_SYSTEM_PROMPT
 from app.agents.router.router_schema import RouterDecision
 from app.llm.openrouter import OpenRouterProvider
 from app.registry.agent_registry import registry
+from app.agents.router.validator import RouterValidator
 
 
 class RouterAgent:
@@ -16,6 +17,7 @@ class RouterAgent:
 
     def __init__(self):
         self.llm = OpenRouterProvider()
+        self.validator = RouterValidator()
 
     def build_prompt(
         self,
@@ -108,7 +110,7 @@ class RouterAgent:
         user_message: str,
     ) -> RouterDecision:
         """
-        Classify the user's message using the LLM.
+        Classify and validate the user's message.
         """
 
         prompt = self.build_prompt(
@@ -128,6 +130,11 @@ class RouterAgent:
                 **data
             )
 
+            # Validate the LLM decision
+            decision = self.validator.validate(
+                decision
+            )
+
         except Exception as e:
 
             print("=" * 80)
@@ -138,18 +145,11 @@ class RouterAgent:
             print(response)
             print("=" * 80)
 
-            # Safe fallback
             decision = RouterDecision(
                 intent="general",
                 confidence=0.0,
-                reason=(
-                    "Router could not parse "
-                    "the LLM response."
-                ),
+                reason="Router could not parse or validate the LLM response.",
                 recommended_agents=["general"],
             )
 
-        # Validate against Agent Registry
-        return self.validate_decision(
-            decision
-        )
+        return decision
